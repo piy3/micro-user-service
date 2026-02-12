@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  user-service:
+    image: micro-userservice:latest
+    # build:
+    #   context: ./user-service
+    #   dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  order-service:
+    image: micro-order:latest
+    # build:
+    #   context: ./order-service
+    #   dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - USER_SERVICE_URL=http://user-service:8080
+    depends_on:
+      - user-service
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    image: micro-frontend:latest
+    # build:
+    #   context: ./frontend
+    #   dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_BASE_URL=http://localhost
+    depends_on:
+      - user-service
+      - order-service
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
