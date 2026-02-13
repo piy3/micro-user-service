@@ -27,12 +27,13 @@ pipeline {
             steps {
                 sh "docker push ${REPOSITORY_URI}:latest"
             }
-            // post {
-            //     success {
-            //         sh "docker rmi ${IMAGE_NAME}:latest || true"
-            //         sh "docker rmi ${REPOSITORY_URI}:latest || true"
-            //     }
-            // }
+            post {
+                success {
+                    // sh "docker rmi ${IMAGE_NAME}:latest || true"
+                    // sh "docker rmi ${REPOSITORY_URI}:latest || true"
+                    sh "docker image prune -f"
+                }
+            }
         }
     }
 }
