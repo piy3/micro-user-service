@@ -1,9 +1,9 @@
 pipeline {
     agent any
     
-    triggers {
-        githubPush()
-    }
+    // triggers {
+    //     githubPush()
+    // }
     
     environment {
         AWS_ACCOUNT_ID = "568035148820" 
@@ -32,13 +32,13 @@ pipeline {
             steps {
                 sh "docker push ${REPOSITORY_URI}:latest"
             }
-            post {
-                success {
-                    // sh "docker rmi ${IMAGE_NAME}:latest || true"
-                    // sh "docker rmi ${REPOSITORY_URI}:latest || true"
-                    sh "docker image prune -f"
-                }
-            }
+            // post {
+            //     success {
+            //         sh "docker rmi ${IMAGE_NAME}:latest || true"
+            //         sh "docker rmi ${REPOSITORY_URI}:latest || true"
+            //         sh "docker image prune -f"
+            //     }
+            // }
         }
     }
 }
